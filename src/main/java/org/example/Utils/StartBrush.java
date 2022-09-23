@@ -1,7 +1,9 @@
 package org.example.Utils;
 
 import jnr.ffi.annotations.In;
+import org.example.Driver.webDriver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
 import java.util.List;
@@ -9,42 +11,47 @@ import java.util.List;
 public class StartBrush {
     public static void startBrush(EdgeDriver edgeDriver) {
         edgeDriver.get(OpenWebsite.getProperties("URL") + "user/node?nodeId=" + OpenWebsite.getProperties("nodeId"));
+        webDriver.TimeOut(1000);
         WebElement video = edgeDriver.findElement(By.tagName("video"));
-        while ("true".equals(video.getDomProperty("paused"))) {
+        if("true".equals(video.getDomProperty("paused"))) {
+            String duration = video.getDomProperty("duration");
+            System.out.println(duration);
+//            Double a = Double.parseDouble(duration) - 100;
+//            edgeDriver.executeScript("arguments[0].currentTime = "+a.toString(), video);
             System.out.println("true".equals(video.getDomProperty("paused")));
             video.click();
-            if ("true".equals(video.getDomProperty("paused"))) {
-                break;
-            } else {
-                String s = "";
-                try {
-                    Thread.sleep(1000);
-                    ImageDispose.saveImage(edgeDriver);
-                    s = ImageDispose.ImageCode();
-                    char[] data = new char[10];
-                    System.out.println(String.copyValueOf(data).length());
-                } catch (Exception e) {
-                    e.printStackTrace();
+            boolean elem = false;
+            while ("true".equals(video.getDomProperty("paused"))) {
+                try{
+                    edgeDriver.findElement(By.className("layui-layer-content"));
+                }catch (NoSuchElementException e){
+                    elem = true;
                 }
-                WebElement div = edgeDriver.findElement(By.className("layui-layer-content"));
-                List<WebElement> input = div.findElements(By.tagName("input"));
-                WebElement code = input.get(1);
-                code.sendKeys(s);
-                edgeDriver.findElement(By.className("layui-layer-btn0")).click();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if(!elem){
+                    String s = "";
+                    try {
+                        webDriver.TimeOut(1000);
+                        ImageDispose.saveImage(edgeDriver);
+                        s = ImageDispose.ImageCode();
+                        char[] data = new char[10];
+                        System.out.println(String.copyValueOf(data).length());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    WebElement div = edgeDriver.findElement(By.className("layui-layer-content"));
+                    List<WebElement> input = div.findElements(By.tagName("input"));
+                    WebElement code = input.get(1);
+                    code.sendKeys(s);
+                    edgeDriver.findElement(By.className("layui-layer-btn0")).click();
+                    webDriver.TimeOut(1000);
                 }
+                if("true".equals(video.getDomProperty("paused"))) video.click();
+                elem = false;
             }
         }
-        String duration = video.getDomProperty("duration");
-        System.out.println(duration);
-        try {
-            Thread.sleep(Integer.parseInt(video.getDomProperty("duration"))* 500L) ;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+
+//            Thread.sleep((long) (Double.parseDouble(video.getDomProperty("duration"))* 500L)) ;
         boolean flag = true;
         while (flag) {
             if ("true".equals(video.getDomProperty("ended"))) flag = false;
@@ -53,11 +60,7 @@ public class StartBrush {
 
     public static void Brush(EdgeDriver edgeDriver){
         edgeDriver.get(OpenWebsite.getProperties("URL") + "user/node?nodeId=" + OpenWebsite.getProperties("nodeId"));
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        webDriver.TimeOut(2000);
         OpenWebsite.setEndId(edgeDriver);
         int nodeId = Integer.parseInt(OpenWebsite.getProperties("nodeId"));
         int endId = Integer.parseInt(OpenWebsite.getProperties("endId"));

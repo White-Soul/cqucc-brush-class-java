@@ -14,6 +14,7 @@ public class OpenWebsite {
 //    登录网站
     public static void OpenWeb(EdgeDriver edgeDriver){
         edgeDriver.get(getProperties("URL")+"user/login");
+        webDriver.TimeOut(1000);
         System.out.println(edgeDriver.getTitle());
         edgeDriver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
         WebElement username = edgeDriver.findElement(By.id("username"));
@@ -23,7 +24,7 @@ public class OpenWebsite {
         String s = "";
         try {
             ImageDispose.saveImage(edgeDriver);
-            Thread.sleep(1000);
+            webDriver.TimeOut(1000);
             s = ImageDispose.ImageCode();
         } catch (Exception e) {
             e.printStackTrace();
@@ -31,11 +32,7 @@ public class OpenWebsite {
         WebElement code = edgeDriver.findElement(By.id("code"));
         code.sendKeys(s);
         edgeDriver.findElement(By.className("btn")).click();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        webDriver.TimeOut(1000);
         SkipWeb.getWebUrl(edgeDriver);
 //        刷所有的课程
         for (String s1 : SkipWeb.Wangke) {

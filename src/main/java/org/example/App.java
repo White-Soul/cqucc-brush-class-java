@@ -15,5 +15,6 @@ public class App
     {
         EdgeDriver edgeDriver = webDriver.initDriver();
         OpenWebsite.OpenWeb(edgeDriver);
+        System.out.println("网课已经刷完！！！！");
     }
 }
